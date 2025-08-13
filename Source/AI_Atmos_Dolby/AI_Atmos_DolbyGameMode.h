@@ -13,6 +13,9 @@ class AAI_Atmos_DolbyGameMode : public AGameModeBase
 
 public:
 	AAI_Atmos_DolbyGameMode();
+
+protected:
+	virtual void BeginPlay();
 };
 
 
