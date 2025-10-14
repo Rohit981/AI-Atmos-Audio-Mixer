@@ -19,10 +19,12 @@ void AAI_Atmos_DolbyGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	USoundBase* BackgroundMusic = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundWave'/Game/Audio/Music/Desert_Storm_Music.Desert_Storm_Music'"));
+	AudioManagerInstance = GetWorld()->SpawnActor<AAudioManager>(AAudioManager::StaticClass());
+
+	/*USoundBase* BackgroundMusic = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundWave'/Game/Audio/Music/Desert_Storm_Music.Desert_Storm_Music'"));
 
 	if (BackgroundMusic)
 	{
 		UGameplayStatics::PlaySound2D(GetWorld(), BackgroundMusic);
-	}
+	}*/
 }

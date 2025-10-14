@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -35,6 +36,8 @@ AAI_Atmos_DolbyCharacter::AAI_Atmos_DolbyCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	
+
 }
 
 void AAI_Atmos_DolbyCharacter::BeginPlay()
@@ -50,6 +53,8 @@ void AAI_Atmos_DolbyCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+	AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioManager::StaticClass()));
 
 }
 
@@ -69,7 +74,31 @@ void AAI_Atmos_DolbyCharacter::SetupPlayerInputComponent(class UInputComponent* 
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::Look);
+
+		EnhancedInputComponent->BindAction(SetCalm, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetCalmMood);
+		EnhancedInputComponent->BindAction(SetTense, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetTenseMood);
+		EnhancedInputComponent->BindAction(SetAction, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetActionMood);
 	}
+}
+
+void AAI_Atmos_DolbyCharacter::SetCalmMood()
+{
+	if(AudioManager != NULL)
+	AudioManager->SetMood(EAudioMood::Calm);
+}
+
+void AAI_Atmos_DolbyCharacter::SetTenseMood()
+{
+	if (AudioManager != NULL)
+	AudioManager->SetMood(EAudioMood::Tense);
+
+}
+
+void AAI_Atmos_DolbyCharacter::SetActionMood()
+{
+	if (AudioManager != NULL)
+	AudioManager->SetMood(EAudioMood::Action);
+
 }
 
 

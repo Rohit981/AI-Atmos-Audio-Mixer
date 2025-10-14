@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include"AudioManager.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
 #include "AI_Atmos_DolbyCharacter.generated.h"
@@ -38,6 +39,15 @@ class AAI_Atmos_DolbyCharacter : public ACharacter
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SetCalm;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SetTense;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SetAction;
 
 	
 public:
@@ -81,6 +91,14 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	AAudioManager* AudioManager;
+
+	void SetCalmMood();
+	void SetTenseMood();
+	void SetActionMood();
 
 
 };

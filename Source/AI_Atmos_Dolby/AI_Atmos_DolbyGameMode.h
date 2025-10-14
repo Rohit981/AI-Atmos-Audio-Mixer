@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AudioManager.h"
 #include "GameFramework/GameModeBase.h"
 #include "AI_Atmos_DolbyGameMode.generated.h"
 
@@ -16,6 +17,8 @@ public:
 
 protected:
 	virtual void BeginPlay();
+
+	class AAudioManager* AudioManagerInstance;
 };
 
 
