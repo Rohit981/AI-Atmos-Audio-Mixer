@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AudioManager.h"
 #include "Components/ActorComponent.h"
 #include "SoundTriggerComponent.generated.h"
 
@@ -25,8 +26,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlaySound();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
-	USoundBase* SoundToPlay;
+	/*UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
+	USoundBase* SoundToPlay;*/
+
+	AAudioManager* AudioManager;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Audio")
 	bool bAttachToOwner = true;

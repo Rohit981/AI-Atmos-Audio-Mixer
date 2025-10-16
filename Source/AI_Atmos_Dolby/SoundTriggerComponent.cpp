@@ -3,6 +3,8 @@
 
 #include "SoundTriggerComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
+
 
 // Sets default values for this component's properties
 USoundTriggerComponent::USoundTriggerComponent()
@@ -21,6 +23,9 @@ void USoundTriggerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+
+	
+
 	
 }
 
@@ -28,14 +33,15 @@ void USoundTriggerComponent::PlaySound()
 {
 	if (bAttachToOwner)
 	{
-		if (SoundToPlay)
+		AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioManager::StaticClass()));
+		if (AudioManager != NULL)
 		{
-			UGameplayStatics::SpawnSoundAttached(SoundToPlay, GetOwner()->GetRootComponent());
+			UGameplayStatics::SpawnSoundAttached(AudioManager->ObjectSound[0], AudioManager->ObjectComponent);
 
 		}
 		else
 		{
-			UGameplayStatics::PlaySoundAtLocation(this, SoundToPlay, GetOwner()->GetActorLocation());
+			UGameplayStatics::PlaySoundAtLocation(this, AudioManager->ObjectSound[0], GetOwner()->GetActorLocation());
 		}
 	}
 

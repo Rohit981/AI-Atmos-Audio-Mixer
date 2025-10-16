@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AudioMLData.h"
+#include "Misc/FileHelper.h"
+#include "HAL/PlatformFilemanager.h"
 #include "GameFramework/Actor.h"
 #include "AudioManager.generated.h"
 
@@ -42,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio|Tracks")
 	TArray<USoundBase*> ObjectSound;
 
+	UPROPERTY(EditAnywhere)
+	UAudioComponent* ObjectComponent;
+
 	void SetMood(EAudioMood NewMood);
 
 private:
@@ -52,10 +58,17 @@ private:
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* AmbientComponent;
 
+	USoundBase* LoadObjectSound;
+
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* RootScene;
 
 	//Volume Setting
 	void ApplyMoodSetting();
+
+	void LogMLData(float PlayerVelocity);
+
+	void OutputMLData(float DeltaTime);
+	
 
 };

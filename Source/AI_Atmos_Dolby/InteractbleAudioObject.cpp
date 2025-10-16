@@ -19,7 +19,7 @@ AInteractbleAudioObject::AInteractbleAudioObject()
 
 	SoundTrigger = CreateDefaultSubobject<USoundTriggerComponent>(TEXT("SoundTriggerComp"));
 
-
+	
 
 }
 
