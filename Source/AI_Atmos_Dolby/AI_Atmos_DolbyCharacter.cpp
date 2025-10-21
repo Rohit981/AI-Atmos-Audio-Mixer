@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,8 +77,12 @@ void AAI_Atmos_DolbyCharacter::SetupPlayerInputComponent(class UInputComponent* 
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::Look);
 
 		EnhancedInputComponent->BindAction(SetCalm, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetCalmMood);
-		EnhancedInputComponent->BindAction(SetTense, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetTenseMood);
+		//EnhancedInputComponent->BindAction(SetTense, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetTenseMood);
 		EnhancedInputComponent->BindAction(SetAction, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetActionMood);
+
+		//Sprinting
+		EnhancedInputComponent->BindAction(Sprint, ETriggerEvent::Started, this, &AAI_Atmos_DolbyCharacter::StartSprinting);
+		EnhancedInputComponent->BindAction(Sprint, ETriggerEvent::Completed, this, &AAI_Atmos_DolbyCharacter::StopSprinting);
 	}
 }
 
@@ -87,18 +92,30 @@ void AAI_Atmos_DolbyCharacter::SetCalmMood()
 	AudioManager->SetMood(EAudioMood::Calm);
 }
 
-void AAI_Atmos_DolbyCharacter::SetTenseMood()
-{
-	if (AudioManager != NULL)
-	AudioManager->SetMood(EAudioMood::Tense);
-
-}
 
 void AAI_Atmos_DolbyCharacter::SetActionMood()
 {
 	if (AudioManager != NULL)
 	AudioManager->SetMood(EAudioMood::Action);
 
+}
+
+void AAI_Atmos_DolbyCharacter::StartSprinting()
+{
+	isSprinting = true;
+	GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
+
+	if (AudioManager != NULL)
+		AudioManager->SetMood(EAudioMood::Tense);
+}
+
+void AAI_Atmos_DolbyCharacter::StopSprinting()
+{
+	isSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+
+	if (AudioManager != NULL)
+		AudioManager->SetMood(EAudioMood::Calm);
 }
 
 

@@ -49,6 +49,8 @@ class AAI_Atmos_DolbyCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* SetAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* Sprint;
 	
 public:
 	AAI_Atmos_DolbyCharacter();
@@ -91,14 +93,17 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
+	bool isSprinting;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 	AAudioManager* AudioManager;
 
 	void SetCalmMood();
-	void SetTenseMood();
 	void SetActionMood();
+
+	void StartSprinting();
+	void StopSprinting();
 
 
 };

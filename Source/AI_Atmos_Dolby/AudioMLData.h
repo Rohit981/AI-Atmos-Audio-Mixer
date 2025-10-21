@@ -17,7 +17,12 @@ struct FAudioMLData
 	UPROPERTY()
 	int32 CurrentMood;
 
-	FAudioMLData() : PlayerVelocity(0.0f), CurrentMood(0) {}
+	bool isJumping;
+	bool isSprinting;
+
+	//float DistanceFromAudioSource;
+
+	FAudioMLData() : PlayerVelocity(0.0f), CurrentMood(0), isJumping(0), isSprinting(0){}
 
 
 };

@@ -45,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio|Tracks")
 	TArray<USoundBase*> ObjectSound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio|Tracks")
+	USoundBase* FootStepTrack;
+
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* ObjectComponent;
 
@@ -58,6 +61,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* AmbientComponent;
 
+	UPROPERTY(EditAnywhere)
+	UAudioComponent* FootStepComponent;
+
 	USoundBase* LoadObjectSound;
 
 	UPROPERTY(VisibleAnywhere)
@@ -66,9 +72,13 @@ private:
 	//Volume Setting
 	void ApplyMoodSetting();
 
-	void LogMLData(float PlayerVelocity);
+	void LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting);
 
 	void OutputMLData(float DeltaTime);
+
+	void SetupAudioComponents();
+
+	FString FilePath;
 	
 
 };
