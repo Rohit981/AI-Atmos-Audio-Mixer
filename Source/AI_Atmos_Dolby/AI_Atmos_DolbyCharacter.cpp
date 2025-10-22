@@ -9,6 +9,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/AudioComponent.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,6 +58,13 @@ void AAI_Atmos_DolbyCharacter::BeginPlay()
 
 	AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioManager::StaticClass()));
 
+}
+
+void AAI_Atmos_DolbyCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	CheckMovementState();
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -116,6 +124,51 @@ void AAI_Atmos_DolbyCharacter::StopSprinting()
 
 	if (AudioManager != NULL)
 		AudioManager->SetMood(EAudioMood::Calm);
+}
+
+
+
+void AAI_Atmos_DolbyCharacter::PlayFootstepSound()
+{
+	USoundBase* FootstepSound = isSprinting ? AudioManager->FootStepTrack : AudioManager->FootStepTrack;
+
+	if (FootstepSound)
+	{
+		AudioManager->FootStepComponent->SetSound(AudioManager->FootStepTrack);
+		UGameplayStatics::PlaySoundAtLocation(this, FootstepSound, GetActorLocation());
+	}
+}
+
+void AAI_Atmos_DolbyCharacter::CheckMovementState()
+{
+	FVector velocity = GetVelocity();
+	float speed = velocity.Size();
+
+	bool isMoving = speed > 10.0f && GetMovementComponent()->IsMovingOnGround();
+
+	if (isMoving && !GetWorldTimerManager().IsTimerActive(FootstepTimerHandle))
+	{
+		/*if (AudioManager != NULL)
+		{
+			AudioManager->PlayFootstepSound();
+		}*/
+		float footstepInterval = isSprinting ? 0.25f : 0.45f;
+		GetWorldTimerManager().SetTimer(FootstepTimerHandle, this, &AAI_Atmos_DolbyCharacter::PlayFootstepSound, footstepInterval, false);
+	}
+	else if (!isMoving)
+	{
+		GetWorldTimerManager().ClearTimer(FootstepTimerHandle);
+	}
+}
+
+void AAI_Atmos_DolbyCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	if (AudioManager->LandingSound)
+	{
+		AudioManager->FootStepComponent->SetSound(AudioManager->LandingSound);
+		UGameplayStatics::PlaySoundAtLocation(this, AudioManager->LandingSound, GetActorLocation());
+	}
 }
 
 

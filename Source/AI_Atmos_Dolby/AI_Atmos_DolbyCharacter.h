@@ -99,11 +99,21 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
 	AAudioManager* AudioManager;
 
+	FTimerHandle FootstepTimerHandle;
+
 	void SetCalmMood();
 	void SetActionMood();
 
 	void StartSprinting();
 	void StopSprinting();
+
+	virtual void Tick(float DeltaTime) override;
+
+	void PlayFootstepSound();
+	void CheckMovementState();
+
+	virtual void Landed(const FHitResult& Hit) override;
+
 
 
 };

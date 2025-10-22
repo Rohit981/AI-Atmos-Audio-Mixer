@@ -48,6 +48,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio|Tracks")
 	USoundBase* FootStepTrack;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio|Tracks")
+	USoundBase* LandingSound;
+
+	UPROPERTY(EditAnywhere)
+	UAudioComponent* FootStepComponent;
+
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* ObjectComponent;
 
@@ -61,8 +67,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* AmbientComponent;
 
-	UPROPERTY(EditAnywhere)
-	UAudioComponent* FootStepComponent;
+	
 
 	USoundBase* LoadObjectSound;
 
@@ -77,6 +82,8 @@ private:
 	void OutputMLData(float DeltaTime);
 
 	void SetupAudioComponents();
+
+	void FootStepComponentVolumeSetup();
 
 	FString FilePath;
 	

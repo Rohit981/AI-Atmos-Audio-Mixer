@@ -38,6 +38,7 @@ AAudioManager::AAudioManager()
 	AmbientTrack = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/Ambient/Birds_Ambient_Sound-2_Cue.Birds_Ambient_Sound-2_Cue'"));
 	LoadObjectSound = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundWave'/Game/Audio/Object_Sound/Metal_Clang_Object_Sound.Metal_Clang_Object_Sound'"));
 	FootStepTrack = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/FootStepSound/FootStep_Sound.FootStep_Sound'"));
+	LandingSound = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/FootStepSound/Landing_Sound_2_Cue.Landing_Sound_2_Cue'"));
 }
 
 
@@ -65,6 +66,8 @@ void AAudioManager::Tick(float DeltaTime)
 
 	OutputMLData(DeltaTime);
 
+	FootStepComponentVolumeSetup();
+
 }
 
 void AAudioManager::ApplyMoodSetting()
@@ -75,14 +78,14 @@ void AAudioManager::ApplyMoodSetting()
 		MusicComponent->SetVolumeMultiplier(0.6f);
 		AmbientComponent->SetVolumeMultiplier(1.0f);
 		ObjectComponent->SetVolumeMultiplier(0.5f);
-		FootStepComponent->SetVolumeMultiplier(0.5f);
+		//FootStepComponent->SetVolumeMultiplier(0.5f);
 		break;
 
 	case EAudioMood::Tense:
 		MusicComponent->SetVolumeMultiplier(0.8f);
 		AmbientComponent->SetVolumeMultiplier(0.7f);
 		ObjectComponent->SetVolumeMultiplier(1.5f);
-		FootStepComponent->SetVolumeMultiplier(10.0f);
+		//FootStepComponent->SetVolumeMultiplier(10.0f);
 
 		break;
 
@@ -90,7 +93,7 @@ void AAudioManager::ApplyMoodSetting()
 		MusicComponent->SetVolumeMultiplier(1.0f);
 		AmbientComponent->SetVolumeMultiplier(0.4f);
 		ObjectComponent->SetVolumeMultiplier(1.0f);
-		FootStepComponent->SetVolumeMultiplier(2.0f);
+		//FootStepComponent->SetVolumeMultiplier(2.0f);
 
 		break;
 	default:
@@ -165,6 +168,15 @@ void AAudioManager::SetupAudioComponents()
 	{
 		FootStepComponent->SetSound(FootStepTrack);
 	}
+}
+
+void AAudioManager::FootStepComponentVolumeSetup()
+{
+	FootStepComponent->SetPitchMultiplier(FMath::FRandRange(0.95f, 1.05f));
+
+	float TargetVolume = (CurrentMood == EAudioMood::Calm) ? 0.5f : (CurrentMood == EAudioMood::Tense) ? 5.f : 0.5f;
+	float NewVolume = FMath::FInterpTo(FootStepComponent->VolumeMultiplier, TargetVolume, GetWorld()->GetDeltaSeconds(), 2.0f);
+	FootStepComponent->SetVolumeMultiplier(NewVolume);
 }
 
 void AAudioManager::SetMood(EAudioMood NewMood)
