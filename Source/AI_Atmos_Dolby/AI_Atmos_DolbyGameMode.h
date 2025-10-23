@@ -19,6 +19,8 @@ protected:
 	virtual void BeginPlay();
 
 	class AAudioManager* AudioManagerInstance;
+
+	
 };
 
 

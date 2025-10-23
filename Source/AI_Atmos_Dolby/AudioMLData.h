@@ -20,9 +20,11 @@ struct FAudioMLData
 	bool isJumping;
 	bool isSprinting;
 
+	float Health;
+
 	//float DistanceFromAudioSource;
 
-	FAudioMLData() : PlayerVelocity(0.0f), CurrentMood(0), isJumping(0), isSprinting(0){}
+	FAudioMLData() : PlayerVelocity(0.0f), CurrentMood(0), isJumping(0), isSprinting(0), Health(0){}
 
 
 };

@@ -77,7 +77,7 @@ private:
 	//Volume Setting
 	void ApplyMoodSetting();
 
-	void LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting);
+	void LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting, float Health);
 
 	void OutputMLData(float DeltaTime);
 

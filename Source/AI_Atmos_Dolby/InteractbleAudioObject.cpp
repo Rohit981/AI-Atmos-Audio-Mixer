@@ -3,6 +3,8 @@
 
 #include "InteractbleAudioObject.h"
 #include "Components/SceneComponent.h"
+#include "Kismet/GameplayStatics.h"
+
 
 
 // Sets default values
@@ -31,6 +33,7 @@ void AInteractbleAudioObject::BeginPlay()
 	BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AInteractbleAudioObject::OnOverlapBegin);
 
 	DrawDebugSphere(GetWorld(), GetActorLocation(), 200.f, 12, FColor::Green, true);
+
 	
 }
 
@@ -46,6 +49,9 @@ void AInteractbleAudioObject::OnOverlapBegin(UPrimitiveComponent* OverlappedComp
 	SoundTrigger = FindComponentByClass<USoundTriggerComponent>();
 	if (OtherActor && OtherActor != this)
 	{
+		AAI_Atmos_DolbyCharacter* PlayerCharacter = Cast<AAI_Atmos_DolbyCharacter>(OtherActor);
+		PlayerCharacter->ReduceHealth();
+
 		if (SoundTrigger)
 		{
 			SoundTrigger->PlaySound();

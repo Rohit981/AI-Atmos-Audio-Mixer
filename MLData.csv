@@ -1,32 +1,6 @@
-PlayerVelocity,CurrentMood, Jumping, Sprinting
-0.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-600.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-600.00,EAudioMood::Calm, 0, 0
-600.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-600.00,EAudioMood::Calm, 0, 0
-600.00,EAudioMood::Calm, 0, 0
-0.00,EAudioMood::Calm, 0, 0
-600.00,EAudioMood::Calm, 0, 0
-493.59,EAudioMood::Calm, 0, 0
-1200.00,EAudioMood::Tense, 0, 1
-1089.52,EAudioMood::Tense, 0, 1
-1200.00,EAudioMood::Tense, 0, 1
-1200.00,EAudioMood::Tense, 0, 1
-1200.58,EAudioMood::Tense, 1, 1
-1190.81,EAudioMood::Tense, 0, 1
-357.79,EAudioMood::Tense, 0, 1
-1200.00,EAudioMood::Tense, 0, 1
-1200.00,EAudioMood::Tense, 0, 1
-1203.02,EAudioMood::Tense, 1, 1
-1200.00,EAudioMood::Tense, 0, 1
-600.00,EAudioMood::Calm, 0, 0
-600.00,EAudioMood::Calm, 0, 0
+PlayerVelocity,CurrentMood, Jumping, Sprinting, Health
+358.40,EAudioMood::Calm, 0, 0, 100.00
+0.00,EAudioMood::Calm, 0, 0, 100.00
+14.55,EAudioMood::Calm, 0, 0, 100.00
+600.00,EAudioMood::Calm, 0, 0, 100.00
+600.00,EAudioMood::Calm, 0, 0, 90.00

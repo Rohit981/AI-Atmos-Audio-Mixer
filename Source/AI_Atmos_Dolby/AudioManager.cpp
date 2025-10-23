@@ -36,7 +36,7 @@ AAudioManager::AAudioManager()
 
 	MusicTrack = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundWave'/Game/Audio/Music/Desert_Storm_Music.Desert_Storm_Music'"));
 	AmbientTrack = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/Ambient/Birds_Ambient_Sound-2_Cue.Birds_Ambient_Sound-2_Cue'"));
-	LoadObjectSound = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundWave'/Game/Audio/Object_Sound/Metal_Clang_Object_Sound.Metal_Clang_Object_Sound'"));
+	LoadObjectSound = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/Object_Sound/Damage_Hit_Vocals_Cue.Damage_Hit_Vocals_Cue'"));
 	FootStepTrack = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/FootStepSound/FootStep_Sound.FootStep_Sound'"));
 	LandingSound = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/FootStepSound/Landing_Sound_2_Cue.Landing_Sound_2_Cue'"));
 }
@@ -51,7 +51,7 @@ void AAudioManager::BeginPlay()
 	SetupAudioComponents();
 
 	FilePath = FPaths::ProjectDir() + "MLData.csv";
-	FString Header = "PlayerVelocity,CurrentMood, Jumping, Sprinting\n";
+	FString Header = "PlayerVelocity,CurrentMood, Jumping, Sprinting, Health\n";
 
 	FFileHelper::SaveStringToFile(Header, *FilePath);
 }
@@ -77,15 +77,15 @@ void AAudioManager::ApplyMoodSetting()
 	case EAudioMood::Calm:
 		MusicComponent->SetVolumeMultiplier(0.6f);
 		AmbientComponent->SetVolumeMultiplier(1.0f);
-		ObjectComponent->SetVolumeMultiplier(0.5f);
-		//FootStepComponent->SetVolumeMultiplier(0.5f);
+		ObjectComponent->SetVolumeMultiplier(1.5f);
+		
 		break;
 
 	case EAudioMood::Tense:
 		MusicComponent->SetVolumeMultiplier(0.8f);
 		AmbientComponent->SetVolumeMultiplier(0.7f);
-		ObjectComponent->SetVolumeMultiplier(1.5f);
-		//FootStepComponent->SetVolumeMultiplier(10.0f);
+		ObjectComponent->SetVolumeMultiplier(3.5f);
+		
 
 		break;
 
@@ -101,7 +101,7 @@ void AAudioManager::ApplyMoodSetting()
 	}
 }
 
-void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting)
+void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting, float Health)
 {
 	//if(!FPlatformFileManager::Get().GetPlatformFile().FileExists(*FilePath))
 	//{
@@ -110,10 +110,11 @@ void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprin
 
 	//}
 
-	FString Line = FString::Printf(TEXT("%.2f,%s, %i, %i\n"), PlayerVelocity,
+	FString Line = FString::Printf(TEXT("%.2f,%s, %i, %i, %.2f\n"), PlayerVelocity,
 								  *UEnum::GetValueAsString(CurrentMood), 
 								  isJumping ? 1 : 0,
-								  isSprinting ? 1 : 0);
+								  isSprinting ? 1 : 0,
+								  Health);
 
 	FFileHelper::SaveStringToFile(Line, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
 }
@@ -133,7 +134,8 @@ void AAudioManager::OutputMLData(float DeltaTime)
 			float Speed = PlayerPawn->GetVelocity().Size();
 			bool jump = PlayerPawn->GetMovementComponent()->IsFalling();
 			bool sprint = Character->isSprinting;
-			LogMLData(Speed, jump, sprint);
+			float Health = Character->MaxHealth;
+			LogMLData(Speed, jump, sprint, Health);
 		}
 		TimeSinceLastLog = 0.0f;
 	}
@@ -172,9 +174,7 @@ void AAudioManager::SetupAudioComponents()
 
 void AAudioManager::FootStepComponentVolumeSetup()
 {
-	FootStepComponent->SetPitchMultiplier(FMath::FRandRange(0.95f, 1.05f));
-
-	float TargetVolume = (CurrentMood == EAudioMood::Calm) ? 0.5f : (CurrentMood == EAudioMood::Tense) ? 5.f : 0.5f;
+	float TargetVolume = (CurrentMood == EAudioMood::Calm) ? 1.0f : (CurrentMood == EAudioMood::Tense) ? 2.5f : 0.5f;
 	float NewVolume = FMath::FInterpTo(FootStepComponent->VolumeMultiplier, TargetVolume, GetWorld()->GetDeltaSeconds(), 2.0f);
 	FootStepComponent->SetVolumeMultiplier(NewVolume);
 }

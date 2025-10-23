@@ -36,13 +36,13 @@ void USoundTriggerComponent::PlaySound()
 		AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioManager::StaticClass()));
 		if (AudioManager != NULL)
 		{
-			UGameplayStatics::SpawnSoundAttached(AudioManager->ObjectSound[0], AudioManager->ObjectComponent);
+			AudioManager->ObjectComponent->Play();
 
 		}
-		else
+		/*else
 		{
-			UGameplayStatics::PlaySoundAtLocation(this, AudioManager->ObjectSound[0], GetOwner()->GetActorLocation());
-		}
+			UGameplayStatics::PlaySoundAtLocation(this, AudioManager->ObjectComponent->Sound, GetOwner()->GetActorLocation());
+		}*/
 	}
 
 }

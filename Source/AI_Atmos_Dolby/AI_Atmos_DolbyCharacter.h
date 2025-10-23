@@ -76,6 +76,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	bool GetHasRifle();
 
+	void ReduceHealth();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats")
+	float MaxHealth = 100;
+
+	float CurrentHealth;
+
+
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -114,7 +123,6 @@ private:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
-
-
+	
 };
 

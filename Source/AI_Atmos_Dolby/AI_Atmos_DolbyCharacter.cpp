@@ -58,6 +58,8 @@ void AAI_Atmos_DolbyCharacter::BeginPlay()
 
 	AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioManager::StaticClass()));
 
+	CurrentHealth = MaxHealth;
+
 }
 
 void AAI_Atmos_DolbyCharacter::Tick(float DeltaTime)
@@ -130,12 +132,13 @@ void AAI_Atmos_DolbyCharacter::StopSprinting()
 
 void AAI_Atmos_DolbyCharacter::PlayFootstepSound()
 {
-	USoundBase* FootstepSound = isSprinting ? AudioManager->FootStepTrack : AudioManager->FootStepTrack;
+	AudioManager->FootStepComponent->SetSound(AudioManager->FootStepTrack);
+
+	USoundBase* FootstepSound = isSprinting ? AudioManager->FootStepComponent->Sound : AudioManager->FootStepComponent->Sound;
 
 	if (FootstepSound)
 	{
-		AudioManager->FootStepComponent->SetSound(AudioManager->FootStepTrack);
-		UGameplayStatics::PlaySoundAtLocation(this, FootstepSound, GetActorLocation());
+		AudioManager->FootStepComponent->Play();
 	}
 }
 
@@ -152,6 +155,9 @@ void AAI_Atmos_DolbyCharacter::CheckMovementState()
 		{
 			AudioManager->PlayFootstepSound();
 		}*/
+
+		AudioManager->FootStepComponent->SetPitchMultiplier(FMath::FRandRange(0.95f, 1.05f));
+
 		float footstepInterval = isSprinting ? 0.25f : 0.45f;
 		GetWorldTimerManager().SetTimer(FootstepTimerHandle, this, &AAI_Atmos_DolbyCharacter::PlayFootstepSound, footstepInterval, false);
 	}
@@ -164,10 +170,11 @@ void AAI_Atmos_DolbyCharacter::CheckMovementState()
 void AAI_Atmos_DolbyCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
-	if (AudioManager->LandingSound)
+	if (AudioManager->FootStepComponent->Sound)
 	{
 		AudioManager->FootStepComponent->SetSound(AudioManager->LandingSound);
-		UGameplayStatics::PlaySoundAtLocation(this, AudioManager->LandingSound, GetActorLocation());
+		AudioManager->FootStepComponent->Play();
+
 	}
 }
 
@@ -206,4 +213,13 @@ void AAI_Atmos_DolbyCharacter::SetHasRifle(bool bNewHasRifle)
 bool AAI_Atmos_DolbyCharacter::GetHasRifle()
 {
 	return bHasRifle;
+}
+
+void AAI_Atmos_DolbyCharacter::ReduceHealth()
+{
+	// Implement health reduction logic here
+	CurrentHealth -= 10.0f;
+
+	MaxHealth = CurrentHealth;
+	
 }
