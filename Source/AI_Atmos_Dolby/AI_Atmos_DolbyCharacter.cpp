@@ -67,6 +67,12 @@ void AAI_Atmos_DolbyCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	CheckMovementState();
+
+	if(CurrentHealth <= 40.0f)
+	{
+		if(AudioManager != NULL)
+		AudioManager->SetMood(EAudioMood::Action);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -86,29 +92,14 @@ void AAI_Atmos_DolbyCharacter::SetupPlayerInputComponent(class UInputComponent* 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::Look);
 
-		EnhancedInputComponent->BindAction(SetCalm, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetCalmMood);
-		//EnhancedInputComponent->BindAction(SetTense, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetTenseMood);
-		EnhancedInputComponent->BindAction(SetAction, ETriggerEvent::Triggered, this, &AAI_Atmos_DolbyCharacter::SetActionMood);
-
+		
 		//Sprinting
 		EnhancedInputComponent->BindAction(Sprint, ETriggerEvent::Started, this, &AAI_Atmos_DolbyCharacter::StartSprinting);
 		EnhancedInputComponent->BindAction(Sprint, ETriggerEvent::Completed, this, &AAI_Atmos_DolbyCharacter::StopSprinting);
 	}
 }
 
-void AAI_Atmos_DolbyCharacter::SetCalmMood()
-{
-	if(AudioManager != NULL)
-	AudioManager->SetMood(EAudioMood::Calm);
-}
 
-
-void AAI_Atmos_DolbyCharacter::SetActionMood()
-{
-	if (AudioManager != NULL)
-	AudioManager->SetMood(EAudioMood::Action);
-
-}
 
 void AAI_Atmos_DolbyCharacter::StartSprinting()
 {
@@ -218,7 +209,7 @@ bool AAI_Atmos_DolbyCharacter::GetHasRifle()
 void AAI_Atmos_DolbyCharacter::ReduceHealth()
 {
 	// Implement health reduction logic here
-	CurrentHealth -= 10.0f;
+	CurrentHealth -= 20.0f;
 
 	MaxHealth = CurrentHealth;
 	

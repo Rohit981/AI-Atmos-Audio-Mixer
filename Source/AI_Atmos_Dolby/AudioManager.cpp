@@ -75,24 +75,24 @@ void AAudioManager::ApplyMoodSetting()
 	switch (CurrentMood)
 	{
 	case EAudioMood::Calm:
-		MusicComponent->SetVolumeMultiplier(0.6f);
-		AmbientComponent->SetVolumeMultiplier(1.0f);
-		ObjectComponent->SetVolumeMultiplier(1.5f);
+		MusicComponent->SetVolumeMultiplier(0.5f);
+		AmbientComponent->SetVolumeMultiplier(0.9f);
+		ObjectComponent->SetVolumeMultiplier(1.0f);
 		
 		break;
 
 	case EAudioMood::Tense:
 		MusicComponent->SetVolumeMultiplier(0.8f);
 		AmbientComponent->SetVolumeMultiplier(0.7f);
-		ObjectComponent->SetVolumeMultiplier(3.5f);
+		ObjectComponent->SetVolumeMultiplier(1.5f);
 		
 
 		break;
 
 	case EAudioMood::Action:
 		MusicComponent->SetVolumeMultiplier(1.5f);
-		AmbientComponent->SetVolumeMultiplier(0.4f);
-		ObjectComponent->SetVolumeMultiplier(1.0f);
+		AmbientComponent->SetVolumeMultiplier(0.5f);
+		ObjectComponent->SetVolumeMultiplier(2.0f);
 		//FootStepComponent->SetVolumeMultiplier(2.0f);
 
 		break;
@@ -174,7 +174,7 @@ void AAudioManager::SetupAudioComponents()
 
 void AAudioManager::FootStepComponentVolumeSetup()
 {
-	float TargetVolume = (CurrentMood == EAudioMood::Calm) ? 1.0f : (CurrentMood == EAudioMood::Tense) ? 2.5f : (CurrentMood == EAudioMood::Action) ? 5.0f : 1.0f;
+	float TargetVolume = (CurrentMood == EAudioMood::Calm) ? 0.6f : (CurrentMood == EAudioMood::Tense) ? 0.8f : (CurrentMood == EAudioMood::Action) ? 1.0f : 0.6f;
 	float NewVolume = FMath::FInterpTo(FootStepComponent->VolumeMultiplier, TargetVolume, GetWorld()->GetDeltaSeconds(), 2.0f);
 	FootStepComponent->SetVolumeMultiplier(NewVolume);
 }
