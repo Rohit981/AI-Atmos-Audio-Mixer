@@ -50,10 +50,9 @@ void AAudioManager::BeginPlay()
 
 	SetupAudioComponents();
 
-	FilePath = FPaths::ProjectDir() + "MLData.csv";
-	FString Header = "PlayerVelocity,CurrentMood, Jumping, Sprinting, Health\n";
+	
 
-	FFileHelper::SaveStringToFile(Header, *FilePath);
+	//FFileHelper::SaveStringToFile(Header, *FilePath);
 }
 
 // Called every frame
@@ -103,12 +102,15 @@ void AAudioManager::ApplyMoodSetting()
 
 void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting, float Health)
 {
-	//if(!FPlatformFileManager::Get().GetPlatformFile().FileExists(*FilePath))
-	//{
-	//	
-	//	//FFileHelper::SaveStringToFile(TEXT(""), *FilePath);
+	FilePath = FPaths::ProjectDir() + "MLData.csv";
+	FString Header = "PlayerVelocity,CurrentMood, Jumping, Sprinting, Health\n";
 
-	//}
+	if(!FPlatformFileManager::Get().GetPlatformFile().FileExists(*FilePath))
+	{
+		
+		FFileHelper::SaveStringToFile(TEXT(""), *FilePath);
+
+	}
 
 	FString Line = FString::Printf(TEXT("%.2f,%s, %i, %i, %.2f\n"), PlayerVelocity,
 								  *UEnum::GetValueAsString(CurrentMood), 

@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset, random_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import torch.optim as optim
+from tqdm import tqdm
 
 #=== Device Setup for the GPU
 device = torch.device("cuda:0")
@@ -51,24 +52,18 @@ class Net(nn.Module):
         self.fc4 = nn.Linear(16,3)
 
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.2)
+        self.dropout = nn.Dropout(0.3)
     
     def forward(self, x):
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
         x = self.dropout(self.relu(self.fc3(x)))
         x = self.fc4(x)
-        return x
+        return F.log_softmax(x, dim=1)
 
 model = Net().to(device)
 
-# X = torch.rand(1,4).to(device)
-# print(X.shape)
-
-# output = model(X)
-# print(output)
-
-criterion = nn.CrossEntropyLoss()
+# criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 #==== Train ====
@@ -76,6 +71,35 @@ EPOCHS = 50
 for epoch in range(EPOCHS):
     model.train()
     running_loss = 0.0
+
+    for inputs, labels in tqdm(train_loader):
+        inputs, labels = inputs.to(device), labels.to(device)
+
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = F.nll_loss(outputs,labels)
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+
+    print(f"Epoch [{epoch+1}]/{EPOCHS}, Loss: {running_loss/len(train_loader): .4f}")
+
+#==== Test ====
+model.eval()
+correct, total = 0,0
+
+with torch.no_grad():
+    for inputs, labels in tqdm(test_loader):
+
+        inputs, labels = inputs.to(device), labels.to(device)
+
+        outputs = model(inputs)
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print("Test Accuracy:", round(correct/total, 3))
+
 
     
 
