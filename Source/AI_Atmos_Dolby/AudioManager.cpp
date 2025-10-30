@@ -51,7 +51,7 @@ void AAudioManager::BeginPlay()
 	SetupAudioComponents();
 
 	
-
+	
 	//FFileHelper::SaveStringToFile(Header, *FilePath);
 }
 
@@ -89,7 +89,7 @@ void AAudioManager::ApplyMoodSetting()
 		break;
 
 	case EAudioMood::Action:
-		MusicComponent->SetVolumeMultiplier(1.5f);
+		MusicComponent->SetVolumeMultiplier(1.2f);
 		AmbientComponent->SetVolumeMultiplier(0.5f);
 		ObjectComponent->SetVolumeMultiplier(2.0f);
 		//FootStepComponent->SetVolumeMultiplier(2.0f);
@@ -108,7 +108,7 @@ void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprin
 	if(!FPlatformFileManager::Get().GetPlatformFile().FileExists(*FilePath))
 	{
 		
-		FFileHelper::SaveStringToFile(TEXT(""), *FilePath);
+		FFileHelper::SaveStringToFile(Header, *FilePath);
 
 	}
 

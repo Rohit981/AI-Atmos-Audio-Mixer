@@ -7,6 +7,9 @@ from torch.utils.data import DataLoader, TensorDataset, random_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 import torch.optim as optim
 from tqdm import tqdm
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 
 #=== Device Setup for the GPU
 device = torch.device("cuda:0")
@@ -14,6 +17,15 @@ device = torch.device("cuda:0")
 #=== Load & Preprocess Data
 data = pd.read_csv("MLData.csv")
 data.columns = data.columns.str.strip()
+
+# print(data['CurrentMood'].value_counts())
+# print(data['Jumping'].value_counts())
+# print(data['Sprinting'].value_counts())
+# print(data['Health'].value_counts())
+
+# sns.pairplot(data, hue='CurrentMood')
+# plt.show()
+
 
 #==== Setup Data values
 X = data[['PlayerVelocity','Jumping','Sprinting','Health']].values
@@ -40,7 +52,7 @@ test_size = len(dataset) - train_size
 train_data, test_data = random_split(dataset, [train_size, test_size])
 
 train_loader = DataLoader(train_data, batch_size=16, shuffle=True)
-test_loader = DataLoader(test_data, batch_size=16, shuffle=True)
+test_loader = DataLoader(test_data, batch_size=16)
 
 #===== Define Neural Network ====
 class Net(nn.Module):
@@ -71,6 +83,7 @@ EPOCHS = 50
 for epoch in range(EPOCHS):
     model.train()
     running_loss = 0.0
+    train_total, train_correct = 0,0
 
     for inputs, labels in tqdm(train_loader):
         inputs, labels = inputs.to(device), labels.to(device)
@@ -82,7 +95,15 @@ for epoch in range(EPOCHS):
         optimizer.step()
         running_loss += loss.item()
 
-    print(f"Epoch [{epoch+1}]/{EPOCHS}, Loss: {running_loss/len(train_loader): .4f}")
+#======= TEST OUT TRAINING ACCURACY    ========
+        _, predicted = torch.max(outputs, 1)
+        train_total += labels.size(0)
+        train_correct += (predicted == labels).sum().item()
+
+    # print(f"Epoch [{epoch+1}]/{EPOCHS}, Loss: {running_loss/len(train_loader): .4f}")
+    
+print("Train Accuracy:", round(train_correct/train_total, 3))
+
 
 #==== Test ====
 model.eval()
@@ -99,7 +120,6 @@ with torch.no_grad():
         correct += (predicted == labels).sum().item()
 
 print("Test Accuracy:", round(correct/total, 3))
-
 
     
 
