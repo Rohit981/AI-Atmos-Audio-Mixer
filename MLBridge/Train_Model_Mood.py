@@ -121,6 +121,8 @@ with torch.no_grad():
 
 print("Test Accuracy:", round(correct/total, 3))
 
+torch.save(model.state_dict(), "MLBridge/MoodNetModel.pth")
+print("Model saved as MoodNetModel.pth")
     
 
 
