@@ -6,6 +6,7 @@
 #include "AudioMLData.h"
 #include "Misc/FileHelper.h"
 #include "HAL/PlatformFilemanager.h"
+#include "MoodPredictor.h"
 #include "GameFramework/Actor.h"
 #include "AudioManager.generated.h"
 
@@ -57,6 +58,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* ObjectComponent;
 
+	
+
 	void SetMood(EAudioMood NewMood);
 
 private:
@@ -67,7 +70,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* AmbientComponent;
 
-	
+	UPROPERTY(EditAnywhere, Category = "ML")
+	AMoodPredictor* MoodPredictorInstance;
 
 	USoundBase* LoadObjectSound;
 
@@ -85,7 +89,14 @@ private:
 
 	void FootStepComponentVolumeSetup();
 
+	void SetPlayerMovementValues();
+
 	FString FilePath;
+
+	float Speed;
+	bool jump;
+	bool sprint;
+	float PlayerHealth;
 	
 
 };

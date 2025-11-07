@@ -5,6 +5,7 @@
 #include "Components/AudioComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AI_Atmos_DolbyCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -50,7 +51,11 @@ void AAudioManager::BeginPlay()
 
 	SetupAudioComponents();
 
-	
+	if (!MoodPredictorInstance)
+	{
+		MoodPredictorInstance = Cast<AMoodPredictor>(UGameplayStatics::GetActorOfClass(this, 
+													 AMoodPredictor::StaticClass()));
+	}
 	
 	//FFileHelper::SaveStringToFile(Header, *FilePath);
 }
@@ -66,6 +71,24 @@ void AAudioManager::Tick(float DeltaTime)
 	OutputMLData(DeltaTime);
 
 	FootStepComponentVolumeSetup();
+
+	SetPlayerMovementValues();
+
+	MoodPredictorInstance->SendDataToPython(Speed, jump, sprint, PlayerHealth);
+
+	int32 PredictedMood = MoodPredictorInstance->ReadPredictionFromPython();
+
+	if (PredictedMood != -1)
+	{
+		switch (PredictedMood)
+		{
+			case 0:UE_LOG(LogTemp, Warning, TEXT("Mood: Calm")); break;
+			case 1:UE_LOG(LogTemp, Warning, TEXT("Mood: Tense")); break;
+			case 2:UE_LOG(LogTemp, Warning, TEXT("Mood: Action")); break;
+			default: break;
+		}
+	}
+
 
 }
 
@@ -133,11 +156,11 @@ void AAudioManager::OutputMLData(float DeltaTime)
 
 		if (PlayerPawn)
 		{
-			float Speed = PlayerPawn->GetVelocity().Size();
-			bool jump = PlayerPawn->GetMovementComponent()->IsFalling();
-			bool sprint = Character->isSprinting;
-			float Health = Character->MaxHealth;
-			LogMLData(Speed, jump, sprint, Health);
+			Speed = PlayerPawn->GetVelocity().Size();
+			jump = PlayerPawn->GetMovementComponent()->IsFalling();
+			sprint = Character->isSprinting;
+			PlayerHealth = Character->MaxHealth;
+			LogMLData(Speed, jump, sprint, PlayerHealth);
 		}
 		TimeSinceLastLog = 0.0f;
 	}
@@ -179,6 +202,20 @@ void AAudioManager::FootStepComponentVolumeSetup()
 	float TargetVolume = (CurrentMood == EAudioMood::Calm) ? 0.6f : (CurrentMood == EAudioMood::Tense) ? 0.8f : (CurrentMood == EAudioMood::Action) ? 1.0f : 0.6f;
 	float NewVolume = FMath::FInterpTo(FootStepComponent->VolumeMultiplier, TargetVolume, GetWorld()->GetDeltaSeconds(), 2.0f);
 	FootStepComponent->SetVolumeMultiplier(NewVolume);
+}
+
+void AAudioManager::SetPlayerMovementValues()
+{
+	APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
+	AAI_Atmos_DolbyCharacter* Character = Cast<AAI_Atmos_DolbyCharacter>(PlayerPawn);
+
+	if (PlayerPawn)
+	{
+		Speed = PlayerPawn->GetVelocity().Size();
+		jump = PlayerPawn->GetMovementComponent()->IsFalling();
+		sprint = Character->isSprinting;
+		PlayerHealth = Character->MaxHealth;
+	}
 }
 
 void AAudioManager::SetMood(EAudioMood NewMood)

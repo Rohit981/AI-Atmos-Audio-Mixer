@@ -1,54 +1,99 @@
-//// Fill out your copyright notice in the Description page of Project Settings.
-//
-//
-//#include "MoodPredictor.h"
-//
-////THIRD_PARTY_INCLUDES_START
-////PRAGMA_PUSH_PLATFORM_DEFAULT_PACKING
-////#include <torch/script.h>
-////PRAGMA_POP_PLATFORM_DEFAULT_PACKING
-////THIRD_PARTY_INCLUDES_END
-//
-//
-////torch::jit::script::Module MoodModel;
-//
-//// Sets default values
-//AMoodPredictor::AMoodPredictor()
-//{
-// 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-//	PrimaryActorTick.bCanEverTick = true;
-//
-//}
-//
-//// Called when the game starts or when spawned
-//void AMoodPredictor::BeginPlay()
-//{
-//	Super::BeginPlay();
-//
-//	/*try
-//	{
-//		FString ModelPath = FPaths::ProjectDir() + TEXT("MoodNetModel.pt");
-//		std::string ModelPathSTD = TCHAR_TO_UTF8(*ModelPath);
-//		MoodModel = torch::jit::load(ModelPathSTD);
-//
-//		UE_LOG(LogTemp, Warning, TEXT("Mood model loaded successfully from %s"), *ModelPath);
-//	}
-//	catch (const c10::Error& e)
-//	{
-//		UE_LOG(LogTemp, Error, TEXT("Error loading the mood model: %s"), *FString(e.what()));
-//	}*/
-//
-//	string ModelPath = TCHAR_TO_UTF8(*(FPaths::ProjectDir() + TEXT("MoodNetModel_TorchScript.pt")));
-//	TorchModel = new TorchWrapper(ModelPath);
-//
-//	UE_LOG(LogTemp, Warning, TEXT("Mood model wrapper initialized successfully from %s"), *(FPaths::ProjectDir() + TEXT("MoodNetModel_TorchScript.pt")));
-//	
-//}
-//
-//// Called every frame
-//void AMoodPredictor::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//
-//}
-//
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "MoodPredictor.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "HAL/PlatformFilemanager.h"
+#include "GenericPlatform/GenericPlatformProcess.h"
+#include "Json.h"
+
+// Sets default values
+AMoodPredictor::AMoodPredictor()
+{
+ 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+}
+
+// Called when the game starts or when spawned
+void AMoodPredictor::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	StartPythonBridge();
+}
+
+// Called every frame
+void AMoodPredictor::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+void AMoodPredictor::StartPythonBridge()
+{
+	PythonPath = TEXT("C:/Users/Rohit/AppData/Local/Programs/Python/Python313/python.exe");
+	ScriptPath = FPaths::ProjectDir() + TEXT("MLBridge/Mood_Infer.py");
+	
+	FString Command = FString::Printf(TEXT("\"%s\" \"%s\""), *PythonPath, *ScriptPath);
+	PythonProcessHandle = FPlatformProcess::CreateProc(*PythonPath, *Command, true, false, false, nullptr, 0, nullptr, nullptr);
+
+	if(PythonProcessHandle.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Python Bridge started successfully."));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to start Python process."));
+	}
+}
+
+void AMoodPredictor::SendDataToPython(float Velocity, bool IsJumping, bool IsSprinting, float Health)
+{
+	FString JsonData;
+
+	JsonData = FString::Printf(TEXT("{\"PlayerVelocity\": %.2f, \"Jumping\": %i, \"Sprinting\": %i, \"Health\": %.2f}"),
+		Velocity,
+		IsJumping ? 1 : 0,
+		IsSprinting ? 1 : 0,
+		Health);
+
+	FString InputFilePath = FPaths::ProjectDir() + TEXT("MLBridge/input.json");
+	FFileHelper::SaveStringToFile(JsonData, *InputFilePath);
+}
+
+int32 AMoodPredictor::ReadPredictionFromPython()
+{
+	FString OutputFilePath = FPaths::ProjectDir() + TEXT("MLBridge/output.json");
+	FString JsonContent;
+
+	if(!FPlatformFileManager::Get().GetPlatformFile().FileExists(*OutputFilePath))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Output file does not exist yet."));
+		return -1;
+	}
+
+	if(FFileHelper::LoadFileToString(JsonContent, *OutputFilePath))
+	{
+		TSharedPtr<FJsonObject> JsonObject;
+		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
+		if(FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
+		{
+			int32 MoodPrediction = JsonObject->GetIntegerField("Mood");
+			return MoodPrediction;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to parse JSON from output file."));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to read output file."));
+	}
+
+	return -1;
+	
+}
+

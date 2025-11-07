@@ -10,7 +10,8 @@ public class AI_Atmos_Dolby : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput", "UMG", "Slate", "SlateCore" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", 
+                                                            "EnhancedInput", "UMG", "Slate", "SlateCore", "Json", "Projects" });
 
         //string PluginPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "../../Plugins/LibTorchUE"));
         //string LibtorchPath = Path.Combine(PluginPath, "Source", "ThirdParty", "libtorch");

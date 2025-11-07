@@ -1,6 +1,1 @@
-{
-  "PlayerVelocity": 600,
-  "Jumping": 1,
-  "Sprinting": 0,
-  "Health": 80
-}
+{"PlayerVelocity": 0.00, "Jumping": 0, "Sprinting": 0, "Health": 100.00}
