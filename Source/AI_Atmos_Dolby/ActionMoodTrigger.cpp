@@ -4,6 +4,7 @@
 #include "ActionMoodTrigger.h"
 #include "AudioManager.h"
 #include "Kismet/GameplayStatics.h"
+#include "AI_Atmos_DolbyCharacter.h"
 
 // Sets default values
 AActionMoodTrigger::AActionMoodTrigger()
@@ -27,6 +28,9 @@ void AActionMoodTrigger::BeginPlay()
 	Super::BeginPlay();
 	
 	DrawDebugBox(GetWorld(), TriggerVolume->GetComponentLocation(), TriggerVolume->GetScaledBoxExtent(), FColor::Red, true);
+
+	
+	
 }
 
 // Called every frame
@@ -40,10 +44,11 @@ void AActionMoodTrigger::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 {
 	if(OtherActor && OtherActor != this)
 	{
-		AAudioManager* AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(),AAudioManager::StaticClass()));
+		AAudioManager* AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioManager::StaticClass()));
 
 		if(AudioManager)
 		{
+			AudioManager->IsActionTrigger = true;
 			AudioManager->SetMood(EAudioMood::Action);
 
 		}
@@ -54,11 +59,20 @@ void AActionMoodTrigger::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActo
 {
 	if(OtherActor && OtherActor != this)
 	{
+
+		AAI_Atmos_DolbyCharacter* Character = Cast<AAI_Atmos_DolbyCharacter>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
 		AAudioManager* AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioManager::StaticClass()));
+
 
 		if(AudioManager)
 		{
+			AudioManager->IsActionTrigger = false;
+
+			if(Character->isSprinting !=true)
 			AudioManager->SetMood(EAudioMood::Calm);
+			else
+			AudioManager->SetMood(EAudioMood::Tense);
 		}
 	}
 }

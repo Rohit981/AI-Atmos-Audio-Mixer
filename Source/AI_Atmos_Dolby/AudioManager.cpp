@@ -68,16 +68,16 @@ void AAudioManager::Tick(float DeltaTime)
 
 	ApplyMoodSetting();
 
-	//OutputMLData(DeltaTime);
+	OutputMLData(DeltaTime);
 
 	FootStepComponentVolumeSetup();
 
-	SetPlayerMovementValues();
+	/*SetPlayerMovementValues();
 
 	static float TimeSinceLastLog = 0.0f;
 	TimeSinceLastLog += DeltaTime;
 
-	if (TimeSinceLastLog >= 2.0f)
+	if (TimeSinceLastLog >= 0.5f)
 	{
 
 		MoodPredictorInstance->SendDataToPython(Speed, jump, sprint, PlayerHealth);
@@ -93,7 +93,7 @@ void AAudioManager::Tick(float DeltaTime)
 		}
 
 		TimeSinceLastLog = 0.0f;
-	}
+	}*/
 
 
 
@@ -130,10 +130,10 @@ void AAudioManager::ApplyMoodSetting()
 	}
 }
 
-void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting, float Health)
+void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting, float Health, float PlayerCurrentLocationX, float PlayerCurrentLocationY)
 {
-	FilePath = FPaths::ProjectDir() + "MLData.csv";
-	FString Header = "PlayerVelocity,CurrentMood, Jumping, Sprinting, Health\n";
+	FilePath = FPaths::ProjectDir() + "MLData_New.csv";
+	FString Header = "PlayerVelocity,CurrentMood, Jumping, Sprinting, Health, PlayerLocationX, PlayerLocationY\n";
 
 	if(!FPlatformFileManager::Get().GetPlatformFile().FileExists(*FilePath))
 	{
@@ -142,11 +142,13 @@ void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprin
 
 	}
 
-	FString Line = FString::Printf(TEXT("%.2f,%s, %i, %i, %.2f\n"), PlayerVelocity,
+	FString Line = FString::Printf(TEXT("%.2f,%s, %i, %i, %.2f, %.2f, %.2f\n"), PlayerVelocity,
 								  *UEnum::GetValueAsString(CurrentMood), 
 								  isJumping ? 1 : 0,
 								  isSprinting ? 1 : 0,
-								  Health);
+								  Health,
+								  PlayerCurrentLocationX,
+		                          PlayerCurrentLocationY);
 
 	FFileHelper::SaveStringToFile(Line, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
 }
@@ -167,7 +169,10 @@ void AAudioManager::OutputMLData(float DeltaTime)
 			jump = PlayerPawn->GetMovementComponent()->IsFalling();
 			sprint = Character->isSprinting;
 			PlayerHealth = Character->MaxHealth;
-			LogMLData(Speed, jump, sprint, PlayerHealth);
+			PlayerLocationX = PlayerPawn->GetActorLocation().X;
+			PlayerLocationY = PlayerPawn->GetActorLocation().Y;
+
+			LogMLData(Speed, jump, sprint, PlayerHealth, PlayerLocationX, PlayerLocationY);
 		}
 		TimeSinceLastLog = 0.0f;
 	}

@@ -58,7 +58,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	UAudioComponent* ObjectComponent;
 
-	
+	bool IsActionTrigger = false;
 
 	void SetMood(EAudioMood NewMood);
 
@@ -81,7 +81,7 @@ private:
 	//Volume Setting
 	void ApplyMoodSetting();
 
-	void LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting, float Health);
+	void LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting, float Health, float PlayerLocationX, float PlayerLocationY);
 
 	void OutputMLData(float DeltaTime);
 
@@ -97,6 +97,8 @@ private:
 	bool jump;
 	bool sprint;
 	float PlayerHealth;
+	float PlayerLocationX;
+	float PlayerLocationY;
 	
 
 };

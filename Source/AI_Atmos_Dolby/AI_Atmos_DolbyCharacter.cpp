@@ -106,8 +106,8 @@ void AAI_Atmos_DolbyCharacter::StartSprinting()
 	isSprinting = true;
 	GetCharacterMovement()->MaxWalkSpeed = 1200.0f;
 
-	if (AudioManager != NULL)
-		AudioManager->SetMood(EAudioMood::Tense);
+	if (AudioManager != NULL && AudioManager->IsActionTrigger != true)
+	AudioManager->SetMood(EAudioMood::Tense);
 }
 
 void AAI_Atmos_DolbyCharacter::StopSprinting()
@@ -115,8 +115,8 @@ void AAI_Atmos_DolbyCharacter::StopSprinting()
 	isSprinting = false;
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
-	if (AudioManager != NULL)
-		AudioManager->SetMood(EAudioMood::Calm);
+	if (AudioManager != NULL && AudioManager->IsActionTrigger != true)
+	AudioManager->SetMood(EAudioMood::Calm);
 }
 
 
