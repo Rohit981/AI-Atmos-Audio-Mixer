@@ -51,16 +51,38 @@ void AMoodPredictor::StartPythonBridge()
 
 void AMoodPredictor::SendDataToPython(float Velocity, bool IsJumping, bool IsSprinting, float Health)
 {
+
+	// Scaler Constants from Training Data
+	const float meanVelocity = 768.310104f;
+	const float meanJumping = 0.384347826f;
+	const float meanSprinting = 0.433623188f;
+	const float meanHealth = 69.6463768f;
+
+	const float scaleVelocity = 408.77609415f;
+	const float scaleJumping = 0.48644072f;
+	const float scaleSprinting = 0.49557453f;
+	const float scaleHealth = 25.8275697f;
+
+	// Convert bools to float for scaling
+	float fJumping = IsJumping ? 1.0f : 0.0f;
+	float fSprinting = IsSprinting ? 1.0f : 0.0f;
+
+	// Apply scaling
+	float scaledVelocity = (Velocity - meanVelocity) / scaleVelocity;
+	float scaledJumping = (fJumping - meanJumping) / scaleJumping;
+	float scaledSprinting = (fSprinting - meanSprinting) / scaleSprinting;
+	float scaledHealth = (Health - meanHealth) / scaleHealth;
+
 	FString JsonData;
 
-	JsonData = FString::Printf(TEXT("{\"PlayerVelocity\": %.2f, \"Jumping\": %i, \"Sprinting\": %i, \"Health\": %.2f}"),
-		Velocity,
-		IsJumping ? 1 : 0,
-		IsSprinting ? 1 : 0,
-		Health);
+	JsonData = FString::Printf(TEXT("{\"PlayerVelocity\": %.6f, \"Jumping\": %.6f, \"Sprinting\": %.6f, \"Health\": %.6f}"),
+							 scaledVelocity,scaledJumping,scaledSprinting,scaledHealth);
 
 	FString InputFilePath = FPaths::ProjectDir() + TEXT("MLBridge/input.json");
 	FFileHelper::SaveStringToFile(JsonData, *InputFilePath);
+
+	UE_LOG(LogTemp, Warning, TEXT("Wrote scaled input -> V: %.4f J: %.4f S: %.4f H: %.4f"),
+								scaledVelocity, scaledJumping, scaledSprinting, scaledHealth);
 }
 
 int32 AMoodPredictor::ReadPredictionFromPython()

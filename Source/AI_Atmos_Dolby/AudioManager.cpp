@@ -68,26 +68,33 @@ void AAudioManager::Tick(float DeltaTime)
 
 	ApplyMoodSetting();
 
-	OutputMLData(DeltaTime);
+	//OutputMLData(DeltaTime);
 
 	FootStepComponentVolumeSetup();
 
 	SetPlayerMovementValues();
 
-	MoodPredictorInstance->SendDataToPython(Speed, jump, sprint, PlayerHealth);
+	static float TimeSinceLastLog = 0.0f;
+	TimeSinceLastLog += DeltaTime;
 
-	int32 PredictedMood = MoodPredictorInstance->ReadPredictionFromPython();
-
-	if (PredictedMood != -1)
+	if (TimeSinceLastLog >= 2.0f)
 	{
-		switch (PredictedMood)
+
+		MoodPredictorInstance->SendDataToPython(Speed, jump, sprint, PlayerHealth);
+
+		int32 PredictedMood = MoodPredictorInstance->ReadPredictionFromPython();
+
+		if (PredictedMood != -1)
 		{
-			case 0:UE_LOG(LogTemp, Warning, TEXT("Mood: Calm")); break;
-			case 1:UE_LOG(LogTemp, Warning, TEXT("Mood: Tense")); break;
-			case 2:UE_LOG(LogTemp, Warning, TEXT("Mood: Action")); break;
-			default: break;
+			CurrentMood = (EAudioMood)PredictedMood;
+
+			FString MoodString = UEnum::GetDisplayValueAsText(CurrentMood).ToString();
+			UE_LOG(LogTemp, Warning, TEXT("Predicted Mood: %s"), *MoodString);
 		}
+
+		TimeSinceLastLog = 0.0f;
 	}
+
 
 
 }

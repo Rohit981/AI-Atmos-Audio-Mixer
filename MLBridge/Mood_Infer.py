@@ -28,10 +28,15 @@ while True:
 
             with torch.no_grad():
                 output = model(features)
-                predicted = torch.argmax(output, dim=1).item()
+
+                probs = torch.softmax(output, dim=1)
+                predicted = torch.argmax(probs, dim=1).item()
+                # print(f"Input: {data}, Probs: {probs.tolist()}, Predicted: {predicted}")
             
             with open("MLBridge/output.json", "w") as f_out:
                 json.dump({"Mood": int(predicted)}, f_out)
+            
+            print(f"Received: {data}")
 
         except json.JSONDecodeError as e:
             print("Error reading input.json", e)

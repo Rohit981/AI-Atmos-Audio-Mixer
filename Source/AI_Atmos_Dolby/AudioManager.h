@@ -13,9 +13,9 @@
 UENUM(BlueprintType)
 enum class EAudioMood : uint8
 {
+	Action UMETA(DisplayName = "Action"),
 	Calm UMETA(DisplayName = "Calm"),
-	Tense UMETA(DisplayName = "Tense"),
-	Action UMETA(DisplayName = "Action")
+	Tense UMETA(DisplayName = "Tense")
 };
 
 UCLASS()

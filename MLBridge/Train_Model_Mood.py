@@ -39,6 +39,9 @@ y = label_encoder.fit_transform(y)
 scaler = StandardScaler()
 X = scaler.fit_transform(X)
 
+# print("Mean:", scaler.mean_)
+# print("Scale:", scaler.scale_)
+
 #=== Convert to Tensor
 X_tensor = torch.tensor(X, dtype=torch.float32)
 y_tensor = torch.tensor(y, dtype=torch.long)
@@ -76,10 +79,10 @@ class Net(nn.Module):
 model = Net().to(device)
 
 # criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.0005)
 
 #==== Train ====
-EPOCHS = 50
+EPOCHS = 100
 for epoch in range(EPOCHS):
     model.train()
     running_loss = 0.0
