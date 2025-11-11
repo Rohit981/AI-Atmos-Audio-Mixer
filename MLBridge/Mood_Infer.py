@@ -23,7 +23,8 @@ while True:
             data = json.loads(content)
 
             features = torch.tensor([
-                [data["PlayerVelocity"], data["Jumping"], data["Sprinting"], data["Health"]]
+                [data["PlayerVelocity"], data["Jumping"], data["Sprinting"], 
+                data["Health"], data["PlayerLocationX"], data["PlayerLocationY"]]
             ], dtype=torch.float32)
 
             with torch.no_grad():

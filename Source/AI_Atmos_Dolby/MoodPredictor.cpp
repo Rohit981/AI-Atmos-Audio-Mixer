@@ -49,19 +49,23 @@ void AMoodPredictor::StartPythonBridge()
 	}
 }
 
-void AMoodPredictor::SendDataToPython(float Velocity, bool IsJumping, bool IsSprinting, float Health)
+void AMoodPredictor::SendDataToPython(float Velocity, bool IsJumping, bool IsSprinting, float Health, float PlayerLocationX, float PlayerLocationY)
 {
 
 	// Scaler Constants from Training Data
-	const float meanVelocity = 768.310104f;
-	const float meanJumping = 0.384347826f;
-	const float meanSprinting = 0.433623188f;
-	const float meanHealth = 69.6463768f;
+	const float meanVelocity = 874.238887f;
+	const float meanJumping = 0.445312500f;
+	const float meanSprinting = 0.520182292f;
+	const float meanHealth = 69.1145833f;
+	const float meanPlayerLocationX = 2397.80192f;
+	const float meanPlayerLocationY = 1764.17562f;
 
-	const float scaleVelocity = 408.77609415f;
-	const float scaleJumping = 0.48644072f;
-	const float scaleSprinting = 0.49557453f;
-	const float scaleHealth = 25.8275697f;
+	const float scaleVelocity = 356.771662f;
+	const float scaleJumping = 0.497000279f;
+	const float scaleSprinting = 0.499592509f;
+	const float scaleHealth = 26.1057025f;
+	const float scalePlayerLocationX = 1630.00791f;
+	const float scalePlayerLocationY = 872.415692f;
 
 	// Convert bools to float for scaling
 	float fJumping = IsJumping ? 1.0f : 0.0f;
@@ -72,17 +76,19 @@ void AMoodPredictor::SendDataToPython(float Velocity, bool IsJumping, bool IsSpr
 	float scaledJumping = (fJumping - meanJumping) / scaleJumping;
 	float scaledSprinting = (fSprinting - meanSprinting) / scaleSprinting;
 	float scaledHealth = (Health - meanHealth) / scaleHealth;
+	float scaledPlayerLocationX = (PlayerLocationX - meanPlayerLocationX) / scalePlayerLocationX;
+	float scaledPlayerLocationY = (PlayerLocationY - meanPlayerLocationY) / scalePlayerLocationY;
 
 	FString JsonData;
 
-	JsonData = FString::Printf(TEXT("{\"PlayerVelocity\": %.6f, \"Jumping\": %.6f, \"Sprinting\": %.6f, \"Health\": %.6f}"),
-							 scaledVelocity,scaledJumping,scaledSprinting,scaledHealth);
+	JsonData = FString::Printf(TEXT("{\"PlayerVelocity\": %.6f, \"Jumping\": %.6f, \"Sprinting\": %.6f, \"Health\": %.6f, \"PlayerLocationX\": %.6f, \"PlayerLocationY\": %.6f}"),
+							 scaledVelocity,scaledJumping,scaledSprinting,scaledHealth, scaledPlayerLocationX, scaledPlayerLocationY);
 
 	FString InputFilePath = FPaths::ProjectDir() + TEXT("MLBridge/input.json");
 	FFileHelper::SaveStringToFile(JsonData, *InputFilePath);
 
-	UE_LOG(LogTemp, Warning, TEXT("Wrote scaled input -> V: %.4f J: %.4f S: %.4f H: %.4f"),
-								scaledVelocity, scaledJumping, scaledSprinting, scaledHealth);
+	UE_LOG(LogTemp, Warning, TEXT("Wrote scaled input -> V: %.4f J: %.4f S: %.4f H: %.4f LX: %.4f LY: %.4f"),
+								scaledVelocity, scaledJumping, scaledSprinting, scaledHealth, scaledPlayerLocationX, scaledPlayerLocationY);
 }
 
 int32 AMoodPredictor::ReadPredictionFromPython()

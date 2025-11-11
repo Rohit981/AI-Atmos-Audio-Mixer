@@ -16,7 +16,7 @@ public:
 	AMoodPredictor();
 
 	void StartPythonBridge();
-	void SendDataToPython(float Velocity, bool IsJumping, bool IsSprinting, float Health);
+	void SendDataToPython(float Velocity, bool IsJumping, bool IsSprinting, float Health, float PlayerLocationX, float PlayerLocationY);
 	int32 ReadPredictionFromPython();
 
 protected:

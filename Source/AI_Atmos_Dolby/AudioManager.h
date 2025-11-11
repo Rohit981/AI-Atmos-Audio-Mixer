@@ -37,6 +37,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio|State")
 	EAudioMood CurrentMood;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio|State")
+	EAudioMood PredictedMood;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio|Tracks")
 	USoundBase* MusicTrack;
 
@@ -90,6 +93,8 @@ private:
 	void FootStepComponentVolumeSetup();
 
 	void SetPlayerMovementValues();
+
+	void SendDataAndReadPrediction(float DeltaTime);
 
 	FString FilePath;
 

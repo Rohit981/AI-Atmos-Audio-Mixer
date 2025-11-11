@@ -68,33 +68,12 @@ void AAudioManager::Tick(float DeltaTime)
 
 	ApplyMoodSetting();
 
-	OutputMLData(DeltaTime);
+	//OutputMLData(DeltaTime);
 
 	FootStepComponentVolumeSetup();
 
-	/*SetPlayerMovementValues();
-
-	static float TimeSinceLastLog = 0.0f;
-	TimeSinceLastLog += DeltaTime;
-
-	if (TimeSinceLastLog >= 0.5f)
-	{
-
-		MoodPredictorInstance->SendDataToPython(Speed, jump, sprint, PlayerHealth);
-
-		int32 PredictedMood = MoodPredictorInstance->ReadPredictionFromPython();
-
-		if (PredictedMood != -1)
-		{
-			CurrentMood = (EAudioMood)PredictedMood;
-
-			FString MoodString = UEnum::GetDisplayValueAsText(CurrentMood).ToString();
-			UE_LOG(LogTemp, Warning, TEXT("Predicted Mood: %s"), *MoodString);
-		}
-
-		TimeSinceLastLog = 0.0f;
-	}*/
-
+	
+	SendDataAndReadPrediction(DeltaTime);
 
 
 }
@@ -227,6 +206,34 @@ void AAudioManager::SetPlayerMovementValues()
 		jump = PlayerPawn->GetMovementComponent()->IsFalling();
 		sprint = Character->isSprinting;
 		PlayerHealth = Character->MaxHealth;
+		PlayerLocationX = PlayerPawn->GetActorLocation().X;
+		PlayerLocationY = PlayerPawn->GetActorLocation().Y;
+	}
+}
+
+void AAudioManager::SendDataAndReadPrediction(float DeltaTime)
+{
+	SetPlayerMovementValues();
+
+	static float TimeSinceLastLog = 0.0f;
+	TimeSinceLastLog += DeltaTime;
+
+	if (TimeSinceLastLog >= 0.5f)
+	{
+
+		MoodPredictorInstance->SendDataToPython(Speed, jump, sprint, PlayerHealth, PlayerLocationX, PlayerLocationY);
+
+		int32 ReadMood = MoodPredictorInstance->ReadPredictionFromPython();
+
+		if (ReadMood != -1)
+		{
+			PredictedMood = (EAudioMood)ReadMood;
+
+			FString MoodString = UEnum::GetDisplayValueAsText(PredictedMood).ToString();
+			UE_LOG(LogTemp, Warning, TEXT("Predicted Mood: %s"), *MoodString);
+		}
+
+		TimeSinceLastLog = 0.0f;
 	}
 }
 
