@@ -27,6 +27,7 @@ struct FAudioMLData
 
 	//float DistanceFromAudioSource;
 
+	// Default constructor
 	FAudioMLData() : PlayerVelocity(0.0f), CurrentMood(0), isJumping(0), isSprinting(0), Health(0), PlayerLocationX(0.0f), PlayerLocationY(0.0f){}
 
 

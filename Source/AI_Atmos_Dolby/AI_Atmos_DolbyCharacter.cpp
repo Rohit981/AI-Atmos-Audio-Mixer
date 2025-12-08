@@ -56,6 +56,7 @@ void AAI_Atmos_DolbyCharacter::BeginPlay()
 		}
 	}
 
+	// Casting Audio Manager and setting initial health
 	AudioManager = Cast<AAudioManager>(UGameplayStatics::GetActorOfClass(GetWorld(), AAudioManager::StaticClass()));
 
 	CurrentHealth = MaxHealth;
@@ -68,6 +69,7 @@ void AAI_Atmos_DolbyCharacter::Tick(float DeltaTime)
 
 	CheckMovementState();
 
+	// Change audio mood based on health
 	if(CurrentHealth <= 40.0f)
 	{
 		if(AudioManager != NULL)
@@ -100,7 +102,7 @@ void AAI_Atmos_DolbyCharacter::SetupPlayerInputComponent(class UInputComponent* 
 }
 
 
-
+// Sprinting functions that changes mood to Tense and increases speed
 void AAI_Atmos_DolbyCharacter::StartSprinting()
 {
 	isSprinting = true;
@@ -110,6 +112,7 @@ void AAI_Atmos_DolbyCharacter::StartSprinting()
 	AudioManager->SetMood(EAudioMood::Tense);
 }
 
+// Reverts speed and mood back to Calm
 void AAI_Atmos_DolbyCharacter::StopSprinting()
 {
 	isSprinting = false;
@@ -120,7 +123,7 @@ void AAI_Atmos_DolbyCharacter::StopSprinting()
 }
 
 
-
+// Footstep sound functions
 void AAI_Atmos_DolbyCharacter::PlayFootstepSound()
 {
 	AudioManager->FootStepComponent->SetSound(AudioManager->FootStepTrack);
@@ -133,6 +136,7 @@ void AAI_Atmos_DolbyCharacter::PlayFootstepSound()
 	}
 }
 
+// Checks if character is moving and plays footstep sounds at intervals
 void AAI_Atmos_DolbyCharacter::CheckMovementState()
 {
 	FVector velocity = GetVelocity();
@@ -142,10 +146,6 @@ void AAI_Atmos_DolbyCharacter::CheckMovementState()
 
 	if (isMoving && !GetWorldTimerManager().IsTimerActive(FootstepTimerHandle))
 	{
-		/*if (AudioManager != NULL)
-		{
-			AudioManager->PlayFootstepSound();
-		}*/
 
 		AudioManager->FootStepComponent->SetPitchMultiplier(FMath::FRandRange(0.95f, 1.05f));
 
@@ -158,6 +158,7 @@ void AAI_Atmos_DolbyCharacter::CheckMovementState()
 	}
 }
 
+// Plays landing sound when character lands
 void AAI_Atmos_DolbyCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
@@ -169,7 +170,7 @@ void AAI_Atmos_DolbyCharacter::Landed(const FHitResult& Hit)
 	}
 }
 
-
+// Movement input
 void AAI_Atmos_DolbyCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -183,6 +184,7 @@ void AAI_Atmos_DolbyCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
+// Look input
 void AAI_Atmos_DolbyCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -196,16 +198,19 @@ void AAI_Atmos_DolbyCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
+// Setter for bHasRifle
 void AAI_Atmos_DolbyCharacter::SetHasRifle(bool bNewHasRifle)
 {
 	bHasRifle = bNewHasRifle;
 }
 
+// Getter for bHasRifle
 bool AAI_Atmos_DolbyCharacter::GetHasRifle()
 {
 	return bHasRifle;
 }
 
+// Reduces health by 20 and updates MaxHealth
 void AAI_Atmos_DolbyCharacter::ReduceHealth()
 {
 	// Implement health reduction logic here

@@ -40,6 +40,7 @@ void AActionMoodTrigger::Tick(float DeltaTime)
 
 }
 
+// Function to handle the begin overlap event and set the mood to Action
 void AActionMoodTrigger::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(OtherActor && OtherActor != this)
@@ -55,6 +56,7 @@ void AActionMoodTrigger::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAc
 	}
 }
 
+// Function to handle the end overlap event and revert the mood to Calm or Tense
 void AActionMoodTrigger::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if(OtherActor && OtherActor != this)

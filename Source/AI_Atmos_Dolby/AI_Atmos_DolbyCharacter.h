@@ -40,15 +40,7 @@ class AAI_Atmos_DolbyCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	class UInputAction* MoveAction;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	//class UInputAction* SetCalm;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	//class UInputAction* SetTense;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	//class UInputAction* SetAction;
-
+	// Sprint Input Action
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* Sprint;
 	
@@ -78,9 +70,11 @@ public:
 
 	void ReduceHealth();
 
+	// Max Health property
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Stats")
 	float MaxHealth = 100;
 
+	// Current Health property
 	float CurrentHealth;
 
 

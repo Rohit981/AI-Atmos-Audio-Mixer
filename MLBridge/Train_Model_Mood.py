@@ -84,7 +84,7 @@ model = Net().to(device)
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 #==== Train ====
-EPOCHS = 100
+EPOCHS = 50
 for epoch in range(EPOCHS):
     model.train()
     running_loss = 0.0

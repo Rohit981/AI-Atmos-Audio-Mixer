@@ -17,6 +17,7 @@ AAudioManager::AAudioManager()
 	RootScene = CreateDefaultSubobject<USceneComponent>(TEXT("RootScene"));
 	RootComponent = RootScene;
 
+	// Audio Components
 	MusicComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("MusicComponent"));
 	MusicComponent->SetupAttachment(RootComponent);
 	MusicComponent->bAutoActivate = false;
@@ -33,8 +34,10 @@ AAudioManager::AAudioManager()
 	FootStepComponent->SetupAttachment(RootComponent);
 	FootStepComponent->bAutoActivate = false;
 
+	// Initial Mood
 	CurrentMood = EAudioMood::Calm;
 
+	// Load Sound Assets
 	MusicTrack = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundWave'/Game/Audio/Music/Desert_Storm_Music.Desert_Storm_Music'"));
 	AmbientTrack = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/Ambient/Birds_Ambient_Sound-2_Cue.Birds_Ambient_Sound-2_Cue'"));
 	LoadObjectSound = LoadObject<USoundBase>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Audio/Object_Sound/Damage_Hit_Vocals_Cue.Damage_Hit_Vocals_Cue'"));
@@ -53,8 +56,7 @@ void AAudioManager::BeginPlay()
 
 	if (!MoodPredictorInstance)
 	{
-		MoodPredictorInstance = Cast<AMoodPredictor>(UGameplayStatics::GetActorOfClass(this, 
-													 AMoodPredictor::StaticClass()));
+		MoodPredictorInstance = Cast<AMoodPredictor>(UGameplayStatics::GetActorOfClass(this, AMoodPredictor::StaticClass()));
 	}
 	
 	//FFileHelper::SaveStringToFile(Header, *FilePath);
@@ -68,8 +70,6 @@ void AAudioManager::Tick(float DeltaTime)
 
 	ApplyMoodSetting();
 
-	//OutputMLData(DeltaTime);
-
 	FootStepComponentVolumeSetup();
 
 	
@@ -78,6 +78,7 @@ void AAudioManager::Tick(float DeltaTime)
 
 }
 
+// Set Mood and apply settings
 void AAudioManager::ApplyMoodSetting()
 {
 	switch (CurrentMood)
@@ -109,6 +110,7 @@ void AAudioManager::ApplyMoodSetting()
 	}
 }
 
+// Log ML Data to CSV
 void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprinting, float Health, float PlayerCurrentLocationX, float PlayerCurrentLocationY)
 {
 	FilePath = FPaths::ProjectDir() + "MLData_New.csv";
@@ -132,6 +134,7 @@ void AAudioManager::LogMLData(float PlayerVelocity, bool isJumping, bool isSprin
 	FFileHelper::SaveStringToFile(Line, *FilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), FILEWRITE_Append);
 }
 
+// Output ML Data every 2 seconds
 void AAudioManager::OutputMLData(float DeltaTime)
 {
 	static float TimeSinceLastLog = 0.0f;
@@ -157,6 +160,7 @@ void AAudioManager::OutputMLData(float DeltaTime)
 	}
 }
 
+// Setup Audio Components with loaded tracks
 void AAudioManager::SetupAudioComponents()
 {
 	ObjectSound.Add(LoadObjectSound);
@@ -188,6 +192,7 @@ void AAudioManager::SetupAudioComponents()
 	}
 }
 
+// Adjust Footstep Volume based on Mood
 void AAudioManager::FootStepComponentVolumeSetup()
 {
 	float TargetVolume = (CurrentMood == EAudioMood::Calm) ? 0.6f : (CurrentMood == EAudioMood::Tense) ? 0.8f : (CurrentMood == EAudioMood::Action) ? 1.0f : 0.6f;
@@ -195,6 +200,7 @@ void AAudioManager::FootStepComponentVolumeSetup()
 	FootStepComponent->SetVolumeMultiplier(NewVolume);
 }
 
+// Get Player Movement Values
 void AAudioManager::SetPlayerMovementValues()
 {
 	APawn* PlayerPawn = GetWorld()->GetFirstPlayerController()->GetPawn();
@@ -211,6 +217,7 @@ void AAudioManager::SetPlayerMovementValues()
 	}
 }
 
+// Send Data to Python and Read Prediction
 void AAudioManager::SendDataAndReadPrediction(float DeltaTime)
 {
 	SetPlayerMovementValues();
@@ -237,6 +244,7 @@ void AAudioManager::SendDataAndReadPrediction(float DeltaTime)
 	}
 }
 
+// Set Mood Function
 void AAudioManager::SetMood(EAudioMood NewMood)
 {
 	

@@ -31,6 +31,7 @@ void AMoodPredictor::Tick(float DeltaTime)
 
 }
 
+// Start the Python process that runs the mood inference script
 void AMoodPredictor::StartPythonBridge()
 {
 	PythonPath = TEXT("C:/Users/Rohit/AppData/Local/Programs/Python/Python313/python.exe");
@@ -49,6 +50,7 @@ void AMoodPredictor::StartPythonBridge()
 	}
 }
 
+// Send scaled player data to Python via JSON file
 void AMoodPredictor::SendDataToPython(float Velocity, bool IsJumping, bool IsSprinting, float Health, float PlayerLocationX, float PlayerLocationY)
 {
 
@@ -91,6 +93,7 @@ void AMoodPredictor::SendDataToPython(float Velocity, bool IsJumping, bool IsSpr
 								scaledVelocity, scaledJumping, scaledSprinting, scaledHealth, scaledPlayerLocationX, scaledPlayerLocationY);
 }
 
+//	Read mood prediction from Python via JSON file
 int32 AMoodPredictor::ReadPredictionFromPython()
 {
 	FString OutputFilePath = FPaths::ProjectDir() + TEXT("MLBridge/output.json");
